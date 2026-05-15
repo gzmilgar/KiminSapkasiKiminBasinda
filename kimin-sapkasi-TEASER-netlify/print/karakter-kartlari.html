@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karakter Kartları · Yazdırılabilir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"><style>
+  :root {
+    --paper: #F6F7FA; --paper-card: #FFFFFF; --paper-warm: #EFF1F5;
+    --ink: #0F1B2D; --ink-soft: #3A4A63; --navy-soft: #5C7A9E; --navy-faint: #C8CFDB;
+    --gold: #B8923D; --gold-light: #D4B574; --gold-deep: #8C6E2A;
+    --paper-on-dark: #ECEEF3; --border-soft: #DDE2EA; --border-line: #E5E9F0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif; background: var(--paper);
+    color: var(--ink); padding: 24px; -webkit-font-smoothing: antialiased;
+  }
+
+  .preview-nav {
+    max-width: 1100px; margin: 0 auto 28px;
+    background: var(--ink); color: var(--paper-on-dark);
+    padding: 16px 22px; display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 12px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600;
+  }
+  .preview-nav .left { color: var(--gold-light); display: flex; align-items: center; gap: 16px; }
+  .preview-nav .left strong { color: var(--gold); font-weight: 700; }
+  .preview-nav button {
+    background: var(--gold); color: var(--ink); border: none;
+    padding: 10px 18px; cursor: pointer;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700;
+    transition: background 0.2s;
+  }
+  .preview-nav button:hover { background: var(--gold-deep); color: var(--paper-on-dark); }
+  .preview-info {
+    max-width: 1100px; margin: 0 auto 32px; padding: 22px 26px;
+    background: var(--paper-card); border: 1px solid var(--border-soft); border-left: 3px solid var(--gold);
+    font-size: 14px; line-height: 1.6; color: var(--ink-soft);
+  }
+  .preview-info strong { color: var(--ink); }
+  .preview-info code {
+    background: var(--paper-warm); padding: 2px 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  }
+
+  /* CHARACTER CARD - A4 portrait, ONE per page */
+  .card-page {
+    width: 210mm; min-height: 297mm;
+    margin: 0 auto 30px;
+    background: white;
+    box-shadow: 0 4px 24px rgba(15,27,45,0.10);
+    padding: 18mm 18mm 14mm;
+    page-break-after: always;
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+  .card-page::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 3mm; background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, transparent 100%);
+  }
+
+  .card-imprint {
+    display: flex; justify-content: space-between;
+    border-bottom: 1px solid var(--ink); padding-bottom: 4mm;
+    margin-bottom: 8mm;
+    font-family: 'JetBrains Mono', monospace; font-size: 9pt;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600;
+  }
+  .card-imprint .left strong { color: var(--ink); font-weight: 800; letter-spacing: 0.28em; }
+  .card-imprint .right { color: var(--navy-soft); }
+
+  .card-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 9pt;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--gold-deep); font-weight: 700;
+    margin-bottom: 4mm; padding-left: 22px; position: relative;
+  }
+  .card-eyebrow::before {
+    content: ''; position: absolute; left: 0; top: 50%;
+    width: 16px; height: 1px; background: var(--gold);
+  }
+
+  .card-title-row {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 8mm; align-items: end;
+    border-bottom: 1px solid var(--border-soft);
+    padding-bottom: 6mm; margin-bottom: 7mm;
+  }
+  .card-title-row h1 {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-size: 52pt; line-height: 0.86;
+    letter-spacing: -0.045em; color: var(--ink);
+  }
+  .card-title-row h1 em {
+    font-style: italic; font-weight: 300; color: var(--gold-deep);
+  }
+  .card-real {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace; font-size: 8pt;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-soft); line-height: 1.6; font-weight: 600;
+  }
+  .card-real strong {
+    display: block; font-family: 'Inter', sans-serif;
+    font-weight: 700; font-size: 13pt;
+    color: var(--ink); margin-top: 2mm;
+    text-transform: none; letter-spacing: -0.01em;
+  }
+
+  .card-quote {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: 18pt; line-height: 1.32; color: var(--ink);
+    border-left: 1.5px solid var(--gold);
+    padding: 3mm 0 3mm 8mm; margin: 0 0 6mm;
+    letter-spacing: -0.015em; max-width: 95%; position: relative;
+  }
+  .card-quote::before {
+    content: '"'; position: absolute; left: -1px; top: -8mm;
+    font-family: 'Fraunces', serif; font-size: 60pt; font-weight: 300;
+    color: var(--gold); line-height: 0.5; opacity: 0.4;
+  }
+
+  .card-tags {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    margin-bottom: 6mm;
+  }
+  .card-tags span {
+    font-family: 'JetBrains Mono', monospace; font-size: 8pt;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    background: var(--ink); color: var(--paper-on-dark);
+    padding: 3px 9px; font-weight: 600;
+  }
+  .card-tags span.alt {
+    background: var(--paper-warm); color: var(--ink-soft);
+    border: 1px solid var(--border-soft);
+  }
+
+  .card-body {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5mm;
+    margin-bottom: 6mm;
+  }
+  .card-body .block {
+    background: var(--paper-warm); padding: 5mm 6mm;
+    border: 1px solid var(--border-soft); position: relative;
+  }
+  .card-body .block.dark {
+    background: var(--ink); color: var(--paper-on-dark); border-color: var(--ink);
+  }
+  .card-body .block-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 8pt;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 700;
+    margin-bottom: 2mm;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card-body .block.dark .block-title { color: var(--gold-light); }
+  .card-body .block-title::before {
+    content: ''; width: 12px; height: 1px; background: var(--gold);
+  }
+  .card-body .block h3 {
+    font-family: 'Fraunces', serif; font-weight: 800;
+    font-variation-settings: 'opsz' 144;
+    font-size: 18pt; line-height: 1; letter-spacing: -0.025em;
+    margin-bottom: 4mm;
+  }
+  .card-body .block.dark h3 { color: var(--paper-on-dark); }
+  .card-body .block h3 em { font-style: italic; font-weight: 300; color: var(--gold-deep); }
+  .card-body .block.dark h3 em { color: var(--gold-light); }
+  .card-body .block ul { list-style: none; }
+  .card-body .block ul li {
+    font-size: 9pt; line-height: 1.45;
+    padding: 2mm 0 2mm 5mm; position: relative;
+    border-bottom: 1px dotted rgba(15,27,45,0.12);
+    color: var(--ink-soft);
+  }
+  .card-body .block.dark ul li {
+    border-bottom: 1px dotted rgba(236,238,243,0.18);
+    color: rgba(236,238,243,0.92);
+  }
+  .card-body .block ul li:last-child { border-bottom: none; }
+  .card-body .block ul li::before {
+    content: '◆'; position: absolute; left: 0; top: 2mm;
+    font-size: 6pt; color: var(--gold);
+  }
+  .card-body .block.dark ul li::before { color: var(--gold-light); }
+
+  .card-questions {
+    background: var(--ink); color: var(--paper-on-dark);
+    padding: 6mm 7mm; position: relative;
+    margin-bottom: 5mm;
+  }
+  .card-questions::before {
+    content: 'SORU CEBİ';
+    position: absolute; top: -2mm; right: 6mm;
+    background: var(--gold); color: var(--ink);
+    font-family: 'JetBrains Mono', monospace; font-size: 8pt;
+    font-weight: 700; letter-spacing: 0.25em; padding: 1mm 3mm;
+  }
+  .card-questions h3 {
+    font-family: 'Fraunces', serif; font-weight: 800;
+    font-variation-settings: 'opsz' 144;
+    font-size: 18pt; line-height: 1; letter-spacing: -0.025em;
+    margin-bottom: 1mm; padding-top: 1mm;
+  }
+  .card-questions h3 em { font-style: italic; font-weight: 300; color: var(--gold-light); }
+  .card-questions .q-sub {
+    font-family: 'JetBrains Mono', monospace; font-size: 8pt;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold-light); margin-bottom: 4mm; padding-bottom: 3mm;
+    border-bottom: 1px solid rgba(236,238,243,0.18);
+    font-weight: 600;
+  }
+  .card-questions ol {
+    list-style: none; counter-reset: q;
+    columns: 2; column-gap: 8mm;
+  }
+  .card-questions ol li {
+    counter-increment: q;
+    font-size: 9pt; line-height: 1.4;
+    padding: 1.5mm 0 1.5mm 7mm; position: relative;
+    color: rgba(236,238,243,0.92); break-inside: avoid;
+    border-bottom: 1px dotted rgba(236,238,243,0.15);
+  }
+  .card-questions ol li::before {
+    content: 'Q' counter(q);
+    position: absolute; left: 0; top: 1.5mm;
+    font-family: 'JetBrains Mono', monospace; font-size: 8pt;
+    color: var(--gold); font-weight: 700;
+  }
+
+  .card-power {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 5mm; align-items: center;
+    background: var(--paper-warm); border: 1px solid var(--border-soft);
+    border-left: 2px solid var(--gold); padding: 4mm 6mm;
+    margin-top: auto;
+  }
+  .card-power .pwr-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 8pt;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold-deep); margin-bottom: 1mm; font-weight: 700;
+  }
+  .card-power .pwr-line {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+    font-size: 13pt; line-height: 1.3;
+    color: var(--ink); letter-spacing: -0.015em;
+  }
+  .card-power .pwr-icon {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
+    font-size: 36pt; line-height: 0.7; color: var(--gold);
+  }
+
+  .card-footer-line {
+    margin-top: 5mm; padding-top: 3mm;
+    border-top: 1px solid var(--border-soft);
+    display: flex; justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace; font-size: 8pt;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--navy-soft); font-weight: 600;
+  }
+
+  /* PRINT */
+  @page { size: A4 portrait; margin: 0; }
+  @media print {
+    .preview-nav, .preview-info { display: none !important; }
+    body { padding: 0; background: white; }
+    .card-page {
+      margin: 0; box-shadow: none;
+      width: 210mm; min-height: 297mm;
+      page-break-after: always;
+    }
+    .card-page:last-child { page-break-after: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="preview-nav">
+  <div class="left">
+    <span><strong>NTT DATA</strong> — SAP Practice</span>
+    <span>·</span>
+    <span>Karakter Kartları · Jüri Çıktısı · Yazdırılabilir</span>
+  </div>
+  <button onclick="window.print()">Yazdır →</button>
+</div>
+
+<div class="preview-info">
+  <strong>Nasıl yazdırılır:</strong> <code>Cmd/Ctrl + P</code> → A4 dikey, %100 ölçek, kenar boşlukları yok. <strong>6 sayfa = 6 karakter</strong>. Her jüri masaya 1 takım gibi çekilebilir, ya da paylaştırılabilir.
+  <br><br>
+  <strong>İçerik:</strong> Eyebrow + karakter adı + gerçek karşılığı, ana cümle, müdahale tonu + zamanı, soru cebi (8 soru, 2 sütun), güç hamlesi.
+</div>
+
+<article class="card-page">
+  <div class="card-imprint">
+    <span class="left"><strong>NTT DATA</strong> · SAP Practice — Aramızda</span>
+    <span class="right">Karakter № 01 / 06 · Jüri</span>
+  </div>
+  
+  <span class="card-eyebrow">MÜŞTERİ · SPONSOR · "ANLIK ISTIYORUM"</span>
+  
+  <div class="card-title-row">
+    <h1>Anlık <em>olsun.</em></h1>
+    <div class="card-real">
+      <span>Şapkayı taşıyan</span>
+      <strong>Serkan Taşkan</strong>
+      <span style="display:block; margin-top:1mm;">Müşteri Sponsor</span>
+    </div>
+  </div>
+  
+  <div class="card-quote">"Ben gece raporu istemiyorum, anlık görmek istiyorum. Mobil olur, AI üretsin olur — beğenirsem 3 ay sonraki sözleşmeyi bugün imzalarım."</div>
+  
+  <div class="card-tags"><span>Anlık takıntılı</span><span>Mobil/AI'ya açık</span><span class="alt">Karar vermeye hazır</span><span class="alt">Detayı sevmiyor</span><span>Gösterilmek istiyor</span></div>
+  
+  <div class="card-body"><div class="block"><div class="block-title">Tonun</div><h3>Nasıl <em>konuşur?</em></h3><ul><li>"Anlık" kelimesini her 3 dakikada bir tekrar eder.</li><li>Teknik detayı dinlemez — sonuç ekranı görmek ister.</li><li>"Mobil olabilir mi?" sorar. "AI üretebilir mi?" merak eder.</li><li>Sözleşme imzalama gücünü hatırlatır — bir tehdit değil, havuç.</li><li>Sabırlı görünür ama 5. dakikada sıkılır.</li></ul></div>
+    <div class="block dark"><div class="block-title">Müdahale</div><h3>Ne <em>zaman gir?</em></h3><ul><li>Ekip "gece batch'i optimize edelim" derken — "anlık" demediler mi?</li><li>Çözüm 3 aydan uzun anlatıldığında.</li><li>Mobil/AI fikri masaya gelmediğinde — sen sor.</li><li>Quick win ile upgrade arasındaki sınır netleşmediğinde.</li><li>"İmzalayacak mıyım?" diye sormalarını bekleme — sen meraklan.</li></ul></div></div>
+  
+  <div class="card-questions"><h3>Soru <em>Cebi</em></h3><div class="q-sub">"Anlık" değil mi anladığın? Onu hatırlat.</div><ol><li>"Anlık" derken ne anladığınızı bana sade bir cümleyle söyleyin.</li><li>Bana yarın sabah hangi ekrandan, hangi cihazdan bakacağımı gösterin.</li><li>Mobilde bunu görebilir miyim? AI ile bir ekran ürettiniz mi hiç?</li><li>Quick win güncellemeyle anlık görebilecek miyim, yoksa upgrade şart mı?</li><li>3 ay bekle dediniz — peki o 3 ayda gece raporuna devam mı edeceğim?</li><li>Bu öneriyi bana sunmak için bugün neden hazırdınız, geçen ay neden değildiniz?</li><li>Sözleşmeyi bugün imzalamak için bana hangi tek cümleyi söylersiniz?</li><li>Eğer ben anlık göremezsem, başka bir vendor bana bunu yapabilir mi?</li></ol></div>
+  
+  <div class="card-power"><div><div class="pwr-label">Güç hamlesi</div><div class="pwr-line">Telefonu çıkar, "şu an saat 14:32, kaç para kazanıyorum?" de.</div></div><div class="pwr-icon">⌁</div></div>
+  
+  <div class="card-footer-line">
+    <span>MARJ-7 · Karakter Kartı</span>
+    <span>"Doğru soru, gizli gerçeği açar."</span>
+  </div>
+</article>
+<article class="card-page">
+  <div class="card-imprint">
+    <span class="left"><strong>NTT DATA</strong> · SAP Practice — Aramızda</span>
+    <span class="right">Karakter № 02 / 06 · Jüri</span>
+  </div>
+  
+  <span class="card-eyebrow">MÜŞTERİ · OPERASYON · LISANS &amp; SAHA</span>
+  
+  <div class="card-title-row">
+    <h1>800 kişi, <em>300 lisans.</em></h1>
+    <div class="card-real">
+      <span>Şapkayı taşıyan</span>
+      <strong>Mehmet Can Dik</strong>
+      <span style="display:block; margin-top:1mm;">Müşteri Operasyon</span>
+    </div>
+  </div>
+  
+  <div class="card-quote">"Patron bu ekranı tüm sahaya açın diyor. Sahada 800 kişim var, lisansım 300. Bana matematik öğretmeyin, çözüm önerin."</div>
+  
+  <div class="card-tags"><span>Pragmatik</span><span>Sahaya yakın</span><span class="alt">Lisans takıntılı</span><span class="alt">Detay düşmanı</span><span>Hızlı çözüm bekliyor</span></div>
+  
+  <div class="card-body"><div class="block"><div class="block-title">Tonun</div><h3>Nasıl <em>konuşur?</em></h3><ul><li>"Saha" kelimesini her cümlede en az bir kez kullanır.</li><li>Teknik kelimelerden kaçar — somut örnek ister.</li><li>Lisans modellerini bilir — açıklama beklemez.</li><li>"Bu bana kaç kullanıcı kazandırır?" sorusunu eksik etmez.</li><li>Önerilen çözüm "ek lisans alın" ise toplantıyı erken bitirir.</li></ul></div>
+    <div class="block dark"><div class="block-title">Müdahale</div><h3>Ne <em>zaman gir?</em></h3><ul><li>Ekip lisans optimizasyonunu unuttuğunda.</li><li>"Read-only kullanıcı" / "Fiori UI Add-on" gibi alternatifler atlandığında.</li><li>Mobil önerildiğinde — kaç kişiye, hangi rolde?</li><li>Build Apps / public app önerisi licensingsiz konuşulduğunda.</li><li>"Hepsi şu lisansa girsin" gibi kestirme cevap verildiğinde.</li></ul></div></div>
+  
+  <div class="card-questions"><h3>Soru <em>Cebi</em></h3><div class="q-sub">Saha dilinden konuş. Lisans modelini bilen ses ol.</div><ol><li>800 kullanıcıyı 300 lisansla nasıl açacağız — somut model lütfen.</li><li>Read-only kullanıcı için indirect access faturası bana çıkar mı?</li><li>Build Apps ile public bir mobil sürüm yaparsak SAP backend ne kadar görür?</li><li>Fiori Launchpad'in self-service rolünde lisans tüketimi nasıl?</li><li>Kullanıcıların %70'i sadece "bakacak" — onlar için ucuz bir paket var mı?</li><li>SAC, BTP App, mobil — hangisi en az lisans yer?</li><li>"Kullanıcıyı azaltın" derseniz buradan çıkarım, bunu unutun.</li><li>3 ay sonra licensing sürprizi yaşamamak için bugün ne imzalayayım?</li></ol></div>
+  
+  <div class="card-power"><div><div class="pwr-label">Güç hamlesi</div><div class="pwr-line">"Bunun bana faturası ne, açık konuşalım" de — sayı bekle.</div></div><div class="pwr-icon">₺</div></div>
+  
+  <div class="card-footer-line">
+    <span>MARJ-7 · Karakter Kartı</span>
+    <span>"Doğru soru, gizli gerçeği açar."</span>
+  </div>
+</article>
+<article class="card-page">
+  <div class="card-imprint">
+    <span class="left"><strong>NTT DATA</strong> · SAP Practice — Aramızda</span>
+    <span class="right">Karakter № 03 / 06 · Jüri</span>
+  </div>
+  
+  <span class="card-eyebrow">MODÜL · BAPI ALIŞKANI · CDS DİRENÇLİ</span>
+  
+  <div class="card-title-row">
+    <h1>BAPI <em>çalışıyor.</em></h1>
+    <div class="card-real">
+      <span>Şapkayı taşıyan</span>
+      <strong>Ahmet Bozdağ</strong>
+      <span style="display:block; margin-top:1mm;">Modül Danışmanı</span>
+    </div>
+  </div>
+  
+  <div class="card-quote">"BAPI ile GET yapalım, on yıldır böyle yapıyoruz, bana nesi yetmedi? CDS yeni gelmiş bir şey, ben emin değilim, daha öğrenmedim."</div>
+  
+  <div class="card-tags"><span>BAPI sevdalısı</span><span>CDS dirençli</span><span class="alt">Conv'a şüpheli</span><span class="alt">"On yıldır böyleydi"</span><span>Modül-içi otorite</span></div>
+  
+  <div class="card-body"><div class="block"><div class="block-title">Tonun</div><h3>Nasıl <em>konuşur?</em></h3><ul><li>"Eski sistemde de BAPI vardı" cümlesini sıkça kurar.</li><li>CDS, RAP, Embedded Steampunk gibi terimleri "modaymış" gibi söyler.</li><li>"Performans şart değil, doğruluk şart" diye savunma yapar.</li><li>Conversion sonrasında nelerin değiştiğini tam bilmez ama itiraf etmez.</li><li>Sakin, kibirli, nazik bir küçümsemeyle konuşur.</li></ul></div>
+    <div class="block dark"><div class="block-title">Müdahale</div><h3>Ne <em>zaman gir?</em></h3><ul><li>Ekip CDS view, OData service, RAP önerdiğinde — eski usul savun.</li><li>"Mass BAPI", "Multi-call" söylenmediğinde — bunu unuttunuz mu?</li><li>Conv geçişi sonrası gelen standart servisler atlandığında.</li><li>Master data değişmeyen tarafı her gece tetikleniyor olduğu açılmadığında.</li><li>Standart-mı-custom-mi tartışması netleşmediğinde.</li></ul></div></div>
+  
+  <div class="card-questions"><h3>Soru <em>Cebi</em></h3><div class="q-sub">Eski sisteme bağlılığını nazikçe savun. Detay'a bat.</div><ol><li>BAPI çalışıyorken neden CDS'e geçeyim, somut faydası ne?</li><li>BAPI_*_GETLIST sürümünü zaten mass çağırıyoruz, ne fark olacak?</li><li>CDS view kim yazacak, kim authorization'ı tutacak — ekipte CDS bilen kim?</li><li>Conv sonrası hangi 3 servis silinebilir? Liste verin, hangi tablo, hangi BAPI?</li><li>Master data delta'sını nasıl tespit edeceksiniz — change document mı, CDC mı, event mı?</li><li>RAP unmanaged mi managed mi, ben karar mı vereceğim?</li><li>"On yıllık kod kötüdür" demeyin — neden kötü, somut?</li><li>Bu önerileri SAP standart yol haritası ile karşılaştırın bakalım.</li></ol></div>
+  
+  <div class="card-power"><div><div class="pwr-label">Güç hamlesi</div><div class="pwr-line">"Kod yazan benim ekibim — siz ne yazacaksınız peki?" de.</div></div><div class="pwr-icon">§</div></div>
+  
+  <div class="card-footer-line">
+    <span>MARJ-7 · Karakter Kartı</span>
+    <span>"Doğru soru, gizli gerçeği açar."</span>
+  </div>
+</article>
+<article class="card-page">
+  <div class="card-imprint">
+    <span class="left"><strong>NTT DATA</strong> · SAP Practice — Aramızda</span>
+    <span class="right">Karakter № 04 / 06 · Jüri</span>
+  </div>
+  
+  <span class="card-eyebrow">CLEAN CORE · PARALLEL · MOBILE · AI</span>
+  
+  <div class="card-title-row">
+    <h1>Bu, <em>batch değil.</em></h1>
+    <div class="card-real">
+      <span>Şapkayı taşıyan</span>
+      <strong>Öner Öztürk</strong>
+      <span style="display:block; margin-top:1mm;">Solution Governance</span>
+    </div>
+  </div>
+  
+  <div class="card-quote">"10 yıl önce batch'ti. Bugün event-driven olur. Yarın mobil olur. Müşteri 'anlık' diyorsa cevap CDS + push'tır, BAPI + cron değil."</div>
+  
+  <div class="card-tags"><span>İlkesel mimar</span><span>Clean Core savunucusu</span><span class="alt">Parallel takıntılı</span><span class="alt">Modern stack'e açık</span><span>Kısa vadeli karşıtı</span></div>
+  
+  <div class="card-body"><div class="block"><div class="block-title">Tonun</div><h3>Nasıl <em>konuşur?</em></h3><ul><li>"Side-by-side", "loose coupling", "event-driven" gibi terimleri rahat kullanır.</li><li>Quick win'e karşı değildir — ama upgrade'in yolunu mutlaka çizer.</li><li>Parallel processing, bgRFC, qRFC, mass call alternatiflerini bilir.</li><li>Mobil için Build Apps / native / PWA arasındaki tercihi sorar.</li><li>AI öneren ekibe "hangi use case için?" diye saplanır.</li></ul></div>
+    <div class="block dark"><div class="block-title">Müdahale</div><h3>Ne <em>zaman gir?</em></h3><ul><li>Quick win ile upgrade arasındaki bağ kopuk anlatıldığında.</li><li>Parallel processing / package size / bgRFC önerisi gelmediğinde.</li><li>"AI ile ekran üreteceğiz" denildiğinde — hangi model, hangi data?</li><li>"Mobil yapalım" denildiğinde — Build Apps mı, Fiori mi, custom mu?</li><li>Activity log mekanizması atlandığında.</li></ul></div></div>
+  
+  <div class="card-questions"><h3>Soru <em>Cebi</em></h3><div class="q-sub">Mimari diliyle konuş. Standart, paralel, modern.</div><ol><li>"Anlık" cevabınız CDS view + OData mı, event-driven mi, push notification mı?</li><li>2 tek istek atan servisi nasıl mass'a çevireceksiniz — bgRFC mi, parallel cursor mı?</li><li>Master data delta için CDC, change pointer, event publisher — hangisi?</li><li>Mobil için Build Apps mi, Fiori Mobile mi, native mi? Trade-off matrisi var mı?</li><li>AI ile ekran üretmek dediniz — Joule Studio mu, custom GPT mi, hangi data leakage riski?</li><li>Activity log için Read Access Log mi, Application Log mi, custom CDS view mi?</li><li>Quick win çözümünüz upgrade'de tamamen mi yenilenecek, kaldıracak mısınız?</li><li>Conv sonrası silebileceğimiz custom kodları kim listeleyecek?</li></ol></div>
+  
+  <div class="card-power"><div><div class="pwr-label">Güç hamlesi</div><div class="pwr-line">Beyaz tahtaya kalk, "şimdi target architecture'ı çizelim" de.</div></div><div class="pwr-icon">◬</div></div>
+  
+  <div class="card-footer-line">
+    <span>MARJ-7 · Karakter Kartı</span>
+    <span>"Doğru soru, gizli gerçeği açar."</span>
+  </div>
+</article>
+<article class="card-page">
+  <div class="card-imprint">
+    <span class="left"><strong>NTT DATA</strong> · SAP Practice — Aramızda</span>
+    <span class="right">Karakter № 05 / 06 · Jüri</span>
+  </div>
+  
+  <span class="card-eyebrow">LEGAL · BÜTÇE · KAYNAK SIKIŞIKLIĞI</span>
+  
+  <div class="card-title-row">
+    <h1>Bütçe <em>bitti.</em></h1>
+    <div class="card-real">
+      <span>Şapkayı taşıyan</span>
+      <strong>Mehmet Nakilcioğlu</strong>
+      <span style="display:block; margin-top:1mm;">Legal · Bütçe</span>
+    </div>
+  </div>
+  
+  <div class="card-quote">"Bu projenin bütçesi şişti. Kaynak azaltıyoruz. 1 saatlik toplantı yeter. Yeni bir şey alacaksak da yazılı, sözleşmeli olsun."</div>
+  
+  <div class="card-tags"><span>Bütçe bekçisi</span><span>Belge fetişi</span><span class="alt">Toplantı düşmanı</span><span class="alt">Kaynak budar</span><span>Risk allerjisi</span></div>
+  
+  <div class="card-body"><div class="block"><div class="block-title">Tonun</div><h3>Nasıl <em>konuşur?</em></h3><ul><li>Cümlelerini madde, fıkra, sözleşme referansıyla destekler.</li><li>Yazılı olmayan her şey "söz konusu değildir" der.</li><li>Kaynak ekleme önerisini "bütçe yok" ile karşılar.</li><li>Toplantıların uzunluğunu sürekli sorgular.</li><li>Sakin, kibar, sonuç odaklı — duygusallığı sevmez.</li></ul></div>
+    <div class="block dark"><div class="block-title">Müdahale</div><h3>Ne <em>zaman gir?</em></h3><ul><li>Quick win'in maliyetini söylemediklerinde.</li><li>"Daha çok kaynak gerekir" denildiğinde — "bütçe yok."</li><li>Toplantı planı yokken "haftada 2 toplantı" denildiğinde.</li><li>Sözleşme dışı iş öneri geldiğinde.</li><li>KVKK / lisans ihlali riski açıldığında.</li></ul></div></div>
+  
+  <div class="card-questions"><h3>Soru <em>Cebi</em></h3><div class="q-sub">Madde, doküman, imza. Detay isteme — sayı iste.</div><ol><li>Quick win güncellemenin saat × adam-gün maliyeti yazılı mı?</li><li>Yeni iş önerinizi mevcut sözleşmenin hangi maddesi kapsıyor?</li><li>Lisans optimizasyonu için ek bir vendor sözleşmesi mi gerekecek?</li><li>"AI ile ekran üreteceğiz" dediniz — bunun GDPR / KVKK uyumu var mı?</li><li>1 saatlik toplantılarla 2 ayda biteceğine dair yazılı bir taahhüdünüz var mı?</li><li>Conv geçişinden sonra silinen custom kodun garanti süresi var mı?</li><li>Aktivite log'u tutacak ekstra disk / lisans maliyeti hesaplandı mı?</li><li>Kaynak sayısı azaltılırsa SLA tanımına uymama riski tahmin edildi mi?</li></ol></div>
+  
+  <div class="card-power"><div><div class="pwr-label">Güç hamlesi</div><div class="pwr-line">"Bunu yazılı isterim, lütfen tutanağa geçirin" de.</div></div><div class="pwr-icon">§</div></div>
+  
+  <div class="card-footer-line">
+    <span>MARJ-7 · Karakter Kartı</span>
+    <span>"Doğru soru, gizli gerçeği açar."</span>
+  </div>
+</article>
+<article class="card-page">
+  <div class="card-imprint">
+    <span class="left"><strong>NTT DATA</strong> · SAP Practice — Aramızda</span>
+    <span class="right">Karakter № 06 / 06 · Jüri</span>
+  </div>
+  
+  <span class="card-eyebrow">ÜST YÖNETİM · "PROJEYİ ALALIM"</span>
+  
+  <div class="card-title-row">
+    <h1>Müşteri <em>ne derse.</em></h1>
+    <div class="card-real">
+      <span>Şapkayı taşıyan</span>
+      <strong>İsmail Fatih Karpınar</strong>
+      <span style="display:block; margin-top:1mm;">Üst Yönetim</span>
+    </div>
+  </div>
+  
+  <div class="card-quote">"Şu an müşteri ne derse OK diyelim, projeyi almamız gerekiyor. Detayı sonra konuşuruz. Önce imza, sonra plan."</div>
+  
+  <div class="card-tags"><span>Yes-man</span><span>Pazar baskısı altında</span><span class="alt">Kısa vade odaklı</span><span class="alt">İmza takıntılı</span><span>Detay düşmanı</span></div>
+  
+  <div class="card-body"><div class="block"><div class="block-title">Tonun</div><h3>Nasıl <em>konuşur?</em></h3><ul><li>"Önce alalım, sonra konuşuruz" düsturuyla yaşar.</li><li>Müşterinin her isteğine kısa "evet" der — ekibe "siz halledin."</li><li>Teknik tartışmaya sabırı yoktur — "uzatmayın" diye keser.</li><li>Yıllık hedef, pipeline, top-line gelir konularında hassastır.</li><li>"Bu yılı kapatalım, gerisi sonra" mantığında çalışır.</li></ul></div>
+    <div class="block dark"><div class="block-title">Müdahale</div><h3>Ne <em>zaman gir?</em></h3><ul><li>Ekip müşteriyi "uyaracağını" söylediğinde — "uyarmayın, evet deyin."</li><li>Quick win'i taahhüt etmekten çekinildiğinde.</li><li>Risk listesi uzadığında — "konsolide edin, müşteri görmesin."</li><li>Sözleşmenin imzalanma tarihi ertelendiğinde.</li><li>Ekip "kaynak yetmiyor" derken — "yine de yapın."</li></ul></div></div>
+  
+  <div class="card-questions"><h3>Soru <em>Cebi</em></h3><div class="q-sub">Tek soru sor: ne zaman imzalıyoruz?</div><ol><li>Müşteri sözleşmeyi bugün imzalasın diye ne söyleyeceğiz, üç cümle yeter.</li><li>Quick win'i bedava yapsak müşteri upgrade'i imzalar mı?</li><li>Risk listenizi neden müşteriyle paylaşıyoruz, gizli tutsak olmaz mı?</li><li>Kaynak yetmiyorsa neden bana bunu söylüyorsunuz, çözün — siz uzmansınız.</li><li>"Anlık" çözüme bugün evet diyebilir miyiz, sonrası mühim mi?</li><li>3 ay sonra başlayacak proje için bugün takım kurabilir miyim?</li><li>Bu projeden kaybedersek pipeline'ımız ne olur — bu ay kapatmamız şart.</li><li>Müşterinin "AI" lafına neden hayır diyelim, evet diyelim, sonra düşünürüz.</li></ol></div>
+  
+  <div class="card-power"><div><div class="pwr-label">Güç hamlesi</div><div class="pwr-line">"Detaya batmayın, müşteri sıkılır — siz çözersiniz, eminim" de.</div></div><div class="pwr-icon">◯</div></div>
+  
+  <div class="card-footer-line">
+    <span>MARJ-7 · Karakter Kartı</span>
+    <span>"Doğru soru, gizli gerçeği açar."</span>
+  </div>
+</article>
+
+</body>
+</html>
